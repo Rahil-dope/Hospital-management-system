@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - Appointments</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --primary-light: #3d8bfd;
+      --primary-dark: #0b5ed7;
+      --secondary: #e7f1ff;
+      --accent: #198754;
+      --accent-light: #20c997;
+      --text: #212529;
+      --text-light: #6c757d;
+      --light: #f8f9fa;
+      --border: #dee2e6;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+      --radius: 12px;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f4f8;
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
+    .admin-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px 30px 30px 30px;
+      position: relative;
+    }
+    h1 {
+      color: var(--primary);
+      margin-bottom: 30px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 15px;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 30px;
+      background: var(--light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(13,110,253,0.05);
+    }
+    th, td {
+      padding: 14px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 1rem;
+      vertical-align: middle;
+    }
+    th {
+      background: var(--secondary);
+      color: var(--primary);
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: var(--transition);
+    }
+    .back-link:hover {
+      text-decoration: underline;
+      color: var(--primary);
+    }
+    .no-data {
+      color: var(--text-light);
+      text-align: center;
+      padding: 40px 0;
+      font-size: 1.2rem;
+    }
+    .status-label {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 2px;
+      text-align: center;
+      min-width: 90px;
+    }
+    .status-pending { background: #ffe066; color: #856404; }
+    .status-completed { background: #d1e7dd; color: #0f5132; }
+    .status-canceled { background: #f8d7da; color: #842029; }
+    .status-postponed { background: #cff4fc; color: #055160; }
+
+    .status-btn {
+      border: none;
+      border-radius: 16px;
+      padding: 6px 12px;
+      margin: 0 2px 2px 0;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .status-btn.completed { background: var(--accent); color: #fff; }
+    .status-btn.canceled { background: #dc3545; color: #fff; }
+    .status-btn.postponed { background: #0dcaf0; color: #fff; }
+    .status-btn:focus { outline: 2px solid var(--primary); }
+    .status-btn:hover { opacity: 0.85; }
+
+    @media (max-width: 1100px) {
+      .admin-container { padding: 20px 5px; }
+      table, th, td { font-size: 0.95rem; }
+      h1 { font-size: 2rem; }
+    }
+    @media (max-width: 900px) {
+      .admin-container { padding: 10px 2px; }
+      table, th, td { font-size: 0.9rem; }
+      h1 { font-size: 1.5rem; }
+      th, td { padding: 8px 4px; }
+    }
+    @media (max-width: 600px) {
+      .admin-container { padding: 5px 1px; }
+      table, th, td { font-size: 0.85rem; }
+      h1 { font-size: 1.1rem; }
+      th, td { padding: 6px 2px; }
+      .status-label { min-width: 60px; font-size: 0.8rem; }
+      .status-btn { font-size: 0.8rem; padding: 4px 6px; }
+    }
+    /* Responsive table: horizontal scroll on small screens */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- ...existing code... -->
+<div class="admin-container">
+  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Main Site</a>
+  <h1>
+    <!-- Add this inside your .admin-container, e.g. after <h1> -->
+<button onclick="logout()" style="float:right;background:#dc3545;color:#fff;border:none;padding:8px 18px;border-radius:20px;font-weight:600;cursor:pointer;margin-top:-10px;">Logout</button>
+<script>
+function logout() {
+  localStorage.removeItem('isAdmin');
+  window.location.href = 'admin-login.html';
+}
+</script>
+<i class="fas fa-calendar-check"></i> All Appointments</h1>
+  <button id="downloadCsvBtn" style="margin-bottom:20px;background:var(--primary);color:#fff;border:none;padding:10px 22px;border-radius:30px;font-size:1rem;font-weight:600;cursor:pointer;transition:var(--transition);"><i class="fas fa-download"></i> Download CSV</button>
+  <div class="table-responsive">
+    <div id="appointmentsTable"></div>
+  </div>
+</div>
+<!-- ...existing code... -->
+<script>
+  if (localStorage.getItem('isAdmin') !== 'true') {
+  window.location.href = 'admin-login.html';
+}
+function renderAppointments() {
+  const appointments = JSON.parse(localStorage.getItem("appointments") || "[]");
+  const tableDiv = document.getElementById("appointmentsTable");
+  if (!appointments.length) {
+    tableDiv.innerHTML = '<div class="no-data">No appointments found.</div>';
+    return;
+  }
+  let html = `<table><thead><tr>
+    <th>Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Department</th><th>Doctor</th>
+    <th>Date</th><th>Time</th><th>Message</th><th>Created</th><th>Status</th><th>Action</th>
+    </tr></thead><tbody>`;
+  appointments.forEach((app, idx) => {
+    html += `<tr>
+      <td>${app.fullname}</td>
+      <td>${app.email}</td>
+      <td>${app.phone}</td>
+      <td>${app.dob}</td>
+      <td>${app.department}</td>
+      <td>${app.doctor}</td>
+      <td>${app.date}</td>
+      <td>${app.time}</td>
+      <td>${app.message}</td>
+      <td>${new Date(app.createdAt).toLocaleString()}</td>
+      <td>
+        <span class="status-label status-${(app.status || "Pending").toLowerCase()}">${app.status || "Pending"}</span>
+      </td>
+      <td>
+        <button onclick="updateStatus(${idx},'Completed')" class="status-btn completed" title="Mark as Completed"><i class="fas fa-check"></i></button>
+        <button onclick="updateStatus(${idx},'Canceled')" class="status-btn canceled" title="Mark as Canceled"><i class="fas fa-times"></i></button>
+        <button onclick="updateStatus(${idx},'Postponed')" class="status-btn postponed" title="Mark as Postponed"><i class="fas fa-clock"></i></button>
+        <button onclick="deleteAppointment(${idx})" class="status-btn" style="background:#f44336;color:#fff;" title="Delete"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  tableDiv.innerHTML = html;
+}
+
+// Update status and save to localStorage
+function updateStatus(idx, status) {
+  const appointments = JSON.parse(localStorage.getItem("appointments") || "[]");
+  appointments[idx].status = status;
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+  renderAppointments();
+}
+
+// Delete appointment
+function deleteAppointment(idx) {
+  if (!confirm("Are you sure you want to delete this appointment?")) return;
+  const appointments = JSON.parse(localStorage.getItem("appointments") || "[]");
+  appointments.splice(idx, 1);
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+  renderAppointments();
+}
+
+// CSV Export Function
+function downloadCSV() {
+  const appointments = JSON.parse(localStorage.getItem("appointments") || "[]");
+  if (!appointments.length) return;
+  const header = ["Name","Email","Phone","DOB","Department","Doctor","Date","Time","Message","Created","Status"];
+  const rows = appointments.map(app => [
+    `"${app.fullname}"`,
+    `"${app.email}"`,
+    `"${app.phone}"`,
+    `"${app.dob}"`,
+    `"${app.department}"`,
+    `"${app.doctor}"`,
+    `"${app.date}"`,
+    `"${app.time}"`,
+    `"${(app.message||"").replace(/"/g,'""')}"`,
+    `"${new Date(app.createdAt).toLocaleString()}"`,
+    `"${app.status||"Pending"}"`
+  ]);
+  let csvContent = header.join(",") + "\n" + rows.map(r=>r.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "appointments.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("downloadCsvBtn").addEventListener("click", downloadCSV);
+
+// Initial render
+renderAppointments();
+// Auto-refresh every 5 seconds
+setInterval(renderAppointments, 5000);
+</script>
+<!-- ...existing
+</body>
+</html>
